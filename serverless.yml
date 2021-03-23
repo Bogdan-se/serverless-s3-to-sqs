@@ -1,0 +1,41 @@
+service: serverless-s3-to-sqs
+frameworkVersion: '2'
+
+custom:
+  bucket: bohdan-${self:service}-${opt:stage, self:provider.stage}
+  queue: s3-queue-${opt:stage, self:provider.stage}
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  stage: dev
+  region: us-east-1
+  memorySize: 128
+  environment:
+    QUEUE_URL: {Ref: S3Queue}
+    REGION: ${self:provider.region}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+          Resource: "arn:aws:s3:::${self:custom.bucket}/*"
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+          Resource: "arn:aws:sqs:*:*:${self:custom.queue}"
+
+functions:
+  process-s3-to-sqs:
+    handler: handler.processS3ToSQS
+    events:
+      - s3: "${self:custom.bucket}"
+
+resources:
+  Resources:
+    S3Queue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: "${self:custom.queue}"

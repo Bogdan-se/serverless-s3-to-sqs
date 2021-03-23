@@ -1,0 +1,14 @@
+{
+  "name": "serverless-s3-to-sqs",
+  "version": "1.0.0",
+  "description": "Sample s3 to sqs serverless flow",
+  "main": "''",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bohdan Semenovych",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.869.0"
+  }
+}
